@@ -50,5 +50,5 @@ bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/ins
 
 Examples:
 - Everything: `bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/install.sh) -a`
-- Flatpak base + apps only: `bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/install.sh) -f -g -k`
-- Only zsh + micro: `bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/install.sh) -z -m`
+- Flatpak base + apps only: `bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/install.sh) -fgk`
+- Only zsh + micro: `bash <(wget -qO- https://raw.githubusercontent.com/xqbreeze/linux-aio/master/install.sh) -zm`
