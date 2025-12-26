@@ -47,20 +47,43 @@ echo_cmd() {
 }
 
 # parse options
+process_short_flags() {
+  local flags="${1:1}"
+  local flag
+  for ((i=0; i<${#flags}; i++)); do
+    flag="${flags:i:1}"
+    case "$flag" in
+      a) DO_TMUX=true; DO_ZSH=true; DO_LSD=true; DO_FLATPAK_BASE=true; DO_GEAR_LEVER=true; DO_KEEPASSXC=true; DO_SYNCTHING=true; DO_MICRO=true ;;
+      t) DO_TMUX=true ;;
+      z) DO_ZSH=true ;;
+      l) DO_LSD=true ;;
+      f) DO_FLATPAK_BASE=true ;;
+      g) DO_GEAR_LEVER=true ;;
+      k) DO_KEEPASSXC=true ;;
+      s) DO_SYNCTHING=true ;;
+      m) DO_MICRO=true ;;
+      h) show_help; exit 0 ;;
+      *) echo "Unknown option: -$flag"; show_help >&2; exit 1 ;;
+    esac
+  done
+}
+
 while (( "$#" )); do
   case "$1" in
-    -a|--all)    DO_TMUX=true; DO_ZSH=true; DO_LSD=true; DO_FLATPAK_BASE=true; DO_GEAR_LEVER=true; DO_KEEPASSXC=true; DO_SYNCTHING=true; DO_MICRO=true; shift ;;
-    -t|--tmux)   DO_TMUX=true; shift ;;
-    -z|--zsh)    DO_ZSH=true; shift ;;
-    -l|--lsd)    DO_LSD=true; shift ;;
-    -f|--flatpak) DO_FLATPAK_BASE=true; shift ;;
-    -g|--gearlever) DO_GEAR_LEVER=true; shift ;;
-    -k|--keepassxc) DO_KEEPASSXC=true; shift ;;
-    -s|--syncthing) DO_SYNCTHING=true; shift ;;
-    -m|--micro)  DO_MICRO=true; shift ;;
-    --dry-run)   DRY_RUN=true; shift ;;
-    -h|--help)   show_help; exit 0 ;;
-    *) echo "Unknown option: $1"; show_help >&2; exit 1 ;;
+    --all)          DO_TMUX=true; DO_ZSH=true; DO_LSD=true; DO_FLATPAK_BASE=true; DO_GEAR_LEVER=true; DO_KEEPASSXC=true; DO_SYNCTHING=true; DO_MICRO=true; shift ;;
+    --tmux)         DO_TMUX=true; shift ;;
+    --zsh)          DO_ZSH=true; shift ;;
+    --lsd)          DO_LSD=true; shift ;;
+    --flatpak)      DO_FLATPAK_BASE=true; shift ;;
+    --gearlever)    DO_GEAR_LEVER=true; shift ;;
+    --keepassxc)    DO_KEEPASSXC=true; shift ;;
+    --syncthing)    DO_SYNCTHING=true; shift ;;
+    --micro)        DO_MICRO=true; shift ;;
+    --dry-run)      DRY_RUN=true; shift ;;
+    --help)         show_help; exit 0 ;;
+    --*)            echo "Unknown option: $1"; show_help >&2; exit 1 ;;
+    -*)             process_short_flags "$1"; shift ;;
+    *)              echo "Unknown option: $1"; show_help >&2; exit 1 ;;
   esac
 done
 
@@ -116,6 +139,12 @@ install_tmux() {
     echo_cmd "$PKG_INSTALL tmux"
   else
     echo "tmux is already installed."
+  fi
+
+  if ! command -v xsel >/dev/null; then
+    echo_cmd "$PKG_INSTALL xsel"
+  else
+    echo "xsel is already installed."
   fi
 
   # download tpm plugin manager
@@ -271,6 +300,10 @@ install_micro() {
   elif command -v alternatives >/dev/null; then
     echo_cmd "sudo alternatives --install /usr/bin/editor editor /usr/local/bin/micro 110"
     echo_cmd "sudo alternatives --set editor /usr/local/bin/micro"
+  fi
+
+  if command -v git >/dev/null; then
+    echo_cmd "git config --global core.editor micro"
   fi
 
   if ! $DO_ZSH; then
