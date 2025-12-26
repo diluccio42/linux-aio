@@ -141,10 +141,14 @@ install_tmux() {
     echo "tmux is already installed."
   fi
 
-  if ! command -v xsel >/dev/null; then
-    echo_cmd "$PKG_INSTALL xsel"
+  if [[ "${XDG_SESSION_TYPE:-}" != "wayland" ]]; then
+    if ! command -v xsel >/dev/null; then
+      echo_cmd "$PKG_INSTALL xsel"
+    else
+      echo "xsel is already installed."
+    fi
   else
-    echo "xsel is already installed."
+    echo "Skipping xsel install on Wayland."
   fi
 
   # download tpm plugin manager
